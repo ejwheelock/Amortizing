@@ -1,0 +1,81 @@
+#June 2016
+#This program takes a loan amount, down payment (opt.),
+#loan interest rate, and length of loan and calculates a
+#monthly payment using a recursive function.
+
+from tkinter import *
+#import math
+
+#GetMonthlyPmt returns the monthly payment for loan
+def GetMonthlyPmt(interest, loanAmt, loanLength):
+    """ The function takes monthly interest as a fraction, total amount
+    of loan, and the length of the loan in months, and calculates and
+    returns the correct monthly payment based on the given values.
+
+    Ex: monthlyPayment = GetMonthlyPmt(interest, loan amount, loan length)"""
+
+    payment = loanAmt*(interest/(1-(1+interest)**(loanLength*-1)))
+    
+    return payment
+
+
+
+
+if __name__ == "__main__":  #the code below won't load if this file is imported as a module
+    
+    #Get input (loan amount, down payment (amount or percent of loan),
+    #percent interest, length of loan (in months or years).
+    totalLoanAmt = float(input('Enter loan amount: $'));
+    downPmt = int(input('Enter amount of down payment: $'));
+    downPmtPct = downPmt/totalLoanAmt if (downPmt > 0) else 0
+    annualPctInterest = float(input('Enter interest of loan: % '));
+    monthLength = int(input('Enter the number of months the loan lasts: '));
+
+    #Calculate amount of loan (if down payment is involved).
+    loanAmt = totalLoanAmt - downPmt if (downPmt > 0) else totalLoanAmt
+
+    #Calculate monthly interest rate.
+    annualFractInterest = annualPctInterest/100
+    monthlyFractInterest = annualFractInterest/12
+
+    #Calculate monthly payment.
+    yearLength = monthLength/12
+    
+    accuratePmt = GetMonthlyPmt(monthlyFractInterest, loanAmt, monthLength)
+#    print('Monthly payment (final) is:  $',accuratePmt)
+    
+    loanRemaining = loanAmt     #initialize before for loop
+    finalPmt = -1               #initialize before for loop
+    #for loop must re-calculate to get amount of final payment to finish up loan
+    for pmtNum in range(monthLength):
+        intPaid = monthlyFractInterest*loanRemaining
+        princPaid = accuratePmt-intPaid
+        loanRemaining -= princPaid
+        if loanRemaining < accuratePmt and loanRemaining > 0:
+            finalPmt = loanRemaining
+# uncomment next 2 lines to debug:
+#    str1 = '\nPayment #%d, Remaining: $%10.2f'% (pmtNum+1, loanRemaining)
+#    print(str1)
+
+
+    #Give number of payments and amount of last payment.
+#    print(monthLength-1)
+#    print(accuratePmt)
+#    print(finalPmt)
+    print('Total Loan: $%10.2f'% totalLoanAmt)
+    print('Down Payment: $%10.2f'% downPmt)
+    print('Loan to be paid: $%10.2f'% loanAmt)
+    print("@ annual interest rate of: %4.2f%% over %2d years." % (annualPctInterest, yearLength))
+    print()
+    finalStr = "%i payments of $%7.2f, and 1 payment of $%6.2f."% (monthLength-1,accuratePmt,finalPmt)
+    print(finalStr)
+    totalAmt = (monthLength-1)*accuratePmt + finalPmt
+    print('The total amount paid over the life of the loan is $%10.2f'% totalAmt)
+    print('These payments are principle + interest payments.')
+
+    print("\nEnd of AmortizeMe.py\nGoodbye")
+
+
+    
+#
+
